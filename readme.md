@@ -64,25 +64,15 @@ q-gram : the J, Count : 3
 
 ./search.out -i test.tst -q test/query.txt -m count
 
-/*
-query : 1 / cam
-
-the pattern occurs 1 times
-
-query : 2 / He
-
-the pattern occurs 4 times
-
-query : 3 / tr
-
-the pattern occurs 1 times
-
-query : 4 / snack
-
-the pattern occurs 1 times
-
-query : 5 / the
-
-the pattern occurs 15 times
-
+/*  
+query : 1 / cam  
+the pattern occurs 1 times  
+query : 2 / He  
+the pattern occurs 4 times  
+query : 3 / tr  
+the pattern occurs 1 times  
+query : 4 / snack  
+the pattern occurs 1 times  
+query : 5 / the  
+the pattern occurs 15 times  
 */
