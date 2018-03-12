@@ -101,15 +101,22 @@ class TST
 	}
 	void constructQgramTree(vector<vector<uint64_t>>& _childrens, vector<ichar>& _labels, vector<uint64_t>& qgramNodePositionsOfTSTLeave);
 	void locate(istring& pattern, vector<uint64_t>& result);
-	std::pair<bool, uint64_t> count(istring& pattern);
+	uint64_t count(istring& pattern);
 	bool translatePattern(istring& pattern, vector<uint64_t>& result, bool isText);
 	bool restoreText(vector<uint64_t>& text, istring& result);
-	bool hasCountVec(){
+	bool hasInternalCountVec(){
 		return this->countNonLeaveVec.size() == this->internalNodes.size();
 	}
-	uint64_t getCount(uint64_t leafIndex){
-		std::cout << leafIndex << "/" << this->countNonLeaveVec.size() << std::endl;
-		return this->countNonLeaveVec[leafIndex];
+	bool hasCountVec(){
+		return this->countNonLeaveVec.size() == this->internalNodes.size() && this->countLeaveVec.size() == this->leave.size();
+	}
+	uint64_t getCount(NodeIndex index){
+		//std::cout << leafIndex << "/" << this->countNonLeaveVec.size() << std::endl;
+		if(index.second){
+			return this->countLeaveVec[index.first];			
+		}else{
+			return this->countNonLeaveVec[index.first];						
+		}
 	}
 	TSTNodePointer createLeafPointer(uint64_t leafIndex){
 		NodeIndex p(leafIndex, true);

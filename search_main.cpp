@@ -25,14 +25,10 @@ void count(tst::TST& tst, ifstream &pfs)
         std::cout << "query : " << ++n << " / " << line << std::endl;
         tst::istring pattern;
         my::createFromString(line, pattern);
-        std::pair<bool, uint64_t> result = tst.count(pattern);
-            std::cout << "the pattern occurs " << result.second << " times" << std::endl;
-        /*
-        if(result.first){
-        }else{
-            std::cout << "the pattern does not exist " << std::endl;
-        }
-        */
+        uint64_t result = tst.count(pattern);
+        
+        std::cout << "the pattern occurs " << result << " times" << std::endl;
+        
     }
 
     pfs.close();
@@ -44,6 +40,7 @@ void locate(tst::TST& tst, ifstream &pfs)
     uint64_t n = 0;
     while (getline(pfs, line))
     {
+        uint64_t totalCount = 0;
         vector<uint64_t> occs;
         if (line[line.size() - 1] == '\r')
             line.erase(line.size() - 1);
@@ -58,11 +55,20 @@ void locate(tst::TST& tst, ifstream &pfs)
             for(auto& index : occs){
                 tst::TST::TSTNodePointer pointer = tst.createLeafPointer(index);
                 pointer.getPathString(resultString);
+                
                 if(tst.hasCountVec()){
-                    std::cout << my::to_string(resultString) << ", Count = " << tst.getCount(index) << std::endl;
+                    //std::cout << my::to_string(resultString) << ", Count = " << tst.getCount(index) << std::endl;
+                    uint64_t count = tst.getCount(make_pair(index, true));
+                    std::cout << my::to_string(resultString) << ", Count = " << count << std::endl;
+                    totalCount += count;
                 }else{
                     std::cout << my::to_string(resultString) << std::endl;
                 }
+                
+            }
+
+            if(tst.hasCountVec()){
+                std::cout << "total count : " << totalCount << std::endl;
             }
         }else{
             std::cout << "the pattern does not exist " << std::endl;
@@ -98,7 +104,7 @@ int main(int argc, char *argv[])
 
     if(mode == "count"){
 
-        if(tree.hasCountVec()){
+        if(tree.hasInternalCountVec()){
         count(tree, queryStream);
         }else{
             std::cout << "This TST does not have the count vector." << std::endl;

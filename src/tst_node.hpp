@@ -20,6 +20,9 @@ namespace tst{
 	using ichar = uint8_t;
 	using ochar = uint64_t;
 	using NodeIndex = std::pair<uint64_t, bool>;
+	// The first value is an index in internal node vector or leaves vector.
+	// If the second bool is false, this index is in internal nodes vector.
+	// otherwise, this index is in leaves vector.
 	using InsertResult = std::pair<bool, uint64_t>;
 
 	struct TSTNode
