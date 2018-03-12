@@ -59,16 +59,16 @@ void locate(tst::TST& tst, ifstream &pfs)
                 if(tst.hasCountVec()){
                     //std::cout << my::to_string(resultString) << ", Count = " << tst.getCount(index) << std::endl;
                     uint64_t count = tst.getCount(make_pair(index, true));
-                    std::cout << my::to_string(resultString) << ", Count = " << count << std::endl;
+                    std::cout << "q-gram : " << my::to_string(resultString) << ", Count : " << count << std::endl;
                     totalCount += count;
                 }else{
-                    std::cout << my::to_string(resultString) << std::endl;
+                    std::cout << "q-gram : "  << my::to_string(resultString) << std::endl;
                 }
                 
             }
 
             if(tst.hasCountVec()){
-                std::cout << "total count : " << totalCount << std::endl;
+                std::cout << "Total count : " << totalCount << std::endl;
             }
         }else{
             std::cout << "the pattern does not exist " << std::endl;

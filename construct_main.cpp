@@ -20,18 +20,16 @@ int main(int argc, char *argv[])
 
     p.add<string>("input_file", 'i', "input file name", true);
     p.add<string>("output_file", 'o', "output file name", true);
-    p.add<string>("output_file2", 'u', "output2 file name", false);
 
-    p.add<string>("qgram", 'q', "qgram length", true);
-    p.add<string>("count", 'a', "append count vector?", false);
+    p.add<int>("qgram", 'q', "qgram length", true);
+    p.add<int>("count", 'a', "append count vector?", false, 1);
 
     p.parse_check(argc, argv);
     string file = p.get<string>("input_file");
     string output_file = p.get<string>("output_file");
-    string output_file2 = p.get<string>("output_file2");
 
-    int32_t qgram = std::stoi(p.get<string>("qgram"));
-    int32_t count = std::stoi(p.get<string>("count"));
+    int32_t qgram = p.get<int>("qgram");
+    int32_t count = p.get<int>("count");
 
     //create tst
     string text = "";
@@ -54,12 +52,14 @@ int main(int argc, char *argv[])
     tst::TST tree;
     tree.construct(itext, qgram);
 
-    if (count == 1)
+    if (count >= 1)
     {
         vector<uint64_t> vec;
         tree.translatePattern(itext, vec, true);
-        tree.constructCountNonLeaveVec(vec);
+        tree.constructCountVec(vec, count == 2);
     }
+
+    tree.printInfo();
 
     tree.save(os);
     os.close();

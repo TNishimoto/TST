@@ -10,7 +10,6 @@ endif(APPLE)
 set(CMAKE_CXX_FLAGS_DEBUG  "-g -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DNDEBUG")
 
-# ビルドするためにインクルードするヘッダーファイルの場所
 INCLUDE_DIRECTORIES(./src ./src/common1)
 
 LINK_DIRECTORIES(~/lib)

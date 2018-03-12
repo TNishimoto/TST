@@ -534,7 +534,7 @@ uint64_t TST::count(istring &pattern)
 	}
 	*/
 }
-void TST::constructCountNonLeaveVec(const vector<uint64_t> &translatedText)
+void TST::constructCountVec(const vector<uint64_t> &translatedText, bool clearCountLeaveVec)
 {
 	//vector<uint64_t> countLeaveVec(this->leave.size(), 0);
 	//this->countLeaveVec(this->leave.size(), 0);
@@ -588,6 +588,10 @@ void TST::constructCountNonLeaveVec(const vector<uint64_t> &translatedText)
 					notCountedNonLeaveStack.push(child.first);
 			}
 		}
+	}
+
+	if(clearCountLeaveVec){
+		this->countLeaveVec.resize(0);
 	}
 }
 }

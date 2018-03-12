@@ -87,7 +87,7 @@ class TST
 	uint64_t truncatedLength;
 
 	void construct(istring &text, uint64_t qgram);
-	void constructCountNonLeaveVec(const vector<uint64_t>& translatedText);
+	void constructCountVec(const vector<uint64_t>& translatedText, bool clearCountLeaveVec);
 	TSTNode getRoot();
 	void clear();
 	void getAllQgrams(vector<string> result);
@@ -110,6 +110,7 @@ class TST
 	bool hasCountVec(){
 		return this->countNonLeaveVec.size() == this->internalNodes.size() && this->countLeaveVec.size() == this->leave.size();
 	}
+
 	uint64_t getCount(NodeIndex index){
 		//std::cout << leafIndex << "/" << this->countNonLeaveVec.size() << std::endl;
 		if(index.second){
@@ -130,6 +131,39 @@ class TST
         for(auto& p : this->countNonLeaveVec){
             std::cout << p << ", ";
         }
+	}
+	void printInfo(){
+		uint64_t totalBytes = 0;
+		std::cout << "internalNode Vector        : " << sizeof(TSTNode) <<" bytes * " << this->internalNodes.size() << std::endl;
+		totalBytes += sizeof(TSTNode) * this->internalNodes.size();
+		std::cout << "leave vector               : " << sizeof(TSTNode) <<" bytes * " << this->leave.size() << std::endl;
+		totalBytes += sizeof(TSTNode) * this->leave.size();
+
+		std::cout << "next leave vector          : " << sizeof(uint64_t) << " bytes * " << this->nextLeave.size() << std::endl;
+		totalBytes += sizeof(uint64_t) * this->nextLeave.size();
+
+		std::cout << "suffix link vector         : " << sizeof(uint64_t) << " bytes * " << this->suffixLinks.size() << std::endl;
+		totalBytes += sizeof(uint64_t) * this->suffixLinks.size();
+
+		uint64_t p = 0;
+		for(auto& children : this->childrens){
+			p += children.size();
+		}
+		std::cout << "children vector            : " <<  sizeof(NodeIndex) << " bytes * " << p << std::endl;
+		totalBytes += sizeof(NodeIndex) * p;
+
+
+		std::cout << "truncated text             : " <<  sizeof(ichar) << " bytes * " << this->truncatedText.size() << std::endl;
+		totalBytes += sizeof(ichar) * this->truncatedText.size();
+
+		std::cout << "internal node count vector : " << sizeof(uint64_t) << " bytes * " << this->countNonLeaveVec.size() << std::endl;
+		totalBytes += sizeof(uint64_t) * this->countNonLeaveVec.size();
+
+		std::cout << "leave count vector         : " << sizeof(uint64_t) <<  " bytes * " << this->countLeaveVec.size() << std::endl;
+		totalBytes += sizeof(uint64_t) * this->countLeaveVec.size();
+
+
+		std::cout << "Total : " << totalBytes << "bytes" << std::endl;
 	}
 	/*
 	void getPathStringFromLeafIndex(uint64_t index, istring& result){
