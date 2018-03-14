@@ -1,7 +1,24 @@
-
+/* 
+ * Copyright (C) 2018, Takaaki Nishimoto, all rights reserved.
+ *
+ *   Redistribution and use in source and binary forms, with or without
+ *   modification, are permitted provided that the following conditions
+ *   are met:
+ *
+ *   1. Redistributions of source code must retain the above Copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *
+ *   2. Redistributions in binary form must reproduce the above Copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *   3. Neither the name of the authors nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ */
 #include "tst_tree.hpp"
 #include "my_vector.h"
-
+#include <algorithm>
 namespace tst
 {
 NodeIndex TST::ROOTINDEX = NodeIndex(0, false);
@@ -132,6 +149,7 @@ InsertResult TST::getInsertIndex(NodeIndex index, ichar edgeCharacter)
 		return make_pair(false, end_pos);
 	}
 }
+
 void TST::getPathString(NodeIndex index, istring &result)
 {
 	result.clear();
@@ -261,7 +279,6 @@ void TST::save(ofstream &os)
 		os.write((const char *)(&this->countLeaveVec[0]), sizeof(uint64_t) * this->countLeaveVec.size());
 	}
 
-
 	std::cout << "finished." << std::endl;
 }
 void TST::load(ifstream &ifs)
@@ -309,7 +326,9 @@ void TST::load(ifstream &ifs)
 	{
 		this->countNonLeaveVec.resize(internalNodeSize);
 		ifs.read((char *)(&this->countNonLeaveVec[0]), sizeof(uint64_t) * internalNodeSize);
-	}else{
+	}
+	else
+	{
 	}
 
 	bool createdCountLeaveVec;
@@ -318,7 +337,9 @@ void TST::load(ifstream &ifs)
 	{
 		this->countLeaveVec.resize(leaveSize);
 		ifs.read((char *)(&this->countLeaveVec[0]), sizeof(uint64_t) * leaveSize);
-	}else{
+	}
+	else
+	{
 	}
 
 	/*
@@ -331,7 +352,6 @@ void TST::load(ifstream &ifs)
 		
 	}
 	*/
-
 
 	std::cout << "loaded." << std::endl;
 }
@@ -480,8 +500,38 @@ bool TST::translatePattern(istring &pattern, vector<uint64_t> &result, bool isTe
 		std::cout << std::endl;
 	return true;
 }
+bool TST::restoreText(vector<uint64_t> &text, istring &result, uint64_t start_pos, uint64_t end_pos){
+	
+	if(start_pos >= this->truncatedLength){
+		throw -1;
+	}
+	uint64_t len = end_pos - start_pos + 1;
+	result.clear();
+	result.resize(len);
+	vector<ichar> tmp;
+	this->getPathString(NodeIndex(text[0], true), tmp);
+	uint64_t min_pos = std::min((uint64_t)(tmp.size() - start_pos), len);
+	uint64_t i;
+	for(i = 0;i<min_pos;i++){
+		result[i] = tmp[i+start_pos]; 
+	}
+	uint64_t p=1;
+	while(i < len){
+		result[i] = this->truncatedText[this->leave[text[p]].textPosition + this->leave[text[p]].edgeLength - 1];
+		i++;
+		p++;
+	
+	}
+	return true;
+}
+
+
 bool TST::restoreText(vector<uint64_t> &text, istring &result)
 {
+	if(text.size() == 0) return true;
+	uint64_t len = text.size() - 1 + this->truncatedLength;
+	return this->restoreText(text, result, 0, len - 1);
+	/*
 	result.clear();
 	//istring fstQgram;
 	this->getPathString(NodeIndex(text[0], true), result);
@@ -495,6 +545,7 @@ bool TST::restoreText(vector<uint64_t> &text, istring &result)
 		result[i + this->truncatedLength - 1] = this->truncatedText[this->leave[text[i]].textPosition + this->leave[text[i]].edgeLength - 1];
 	}
 	return true;
+	*/
 }
 void TST::locate(istring &pattern, vector<uint64_t> &result)
 {
@@ -523,24 +574,37 @@ uint64_t TST::count(istring &pattern)
 	}
 	uint64_t count = this->getCount(pointer.index);
 	return count;
-
-	/*
+}
+std::pair<bool, uint64_t> TST::countUsingInternalCountVec(istring &pattern)
+{
+	TSTNodePointer pointer(*this, ROOTINDEX, 0);
+	bool b = false;
+	for (auto it : pattern)
+	{
+		b = pointer.proceed(it);
+		if (!b)
+		{
+			return make_pair(true, 0);
+		}
+	}
 	if (pointer.index.second)
 	{
 		return make_pair(false, pointer.index.first);
 	}
 	else
 	{
+		return make_pair(true, this->countNonLeaveVec[pointer.index.first]);
 	}
-	*/
 }
+
 void TST::constructCountVec(const vector<uint64_t> &translatedText, bool clearCountLeaveVec)
 {
 	//vector<uint64_t> countLeaveVec(this->leave.size(), 0);
 	//this->countLeaveVec(this->leave.size(), 0);
 	this->countLeaveVec.resize(this->leave.size(), 0);
-	for (auto it : translatedText){
-		this->countLeaveVec[it]++;		
+	for (auto it : translatedText)
+	{
+		this->countLeaveVec[it]++;
 	}
 
 	for (auto it : this->countLeaveVec)
@@ -590,7 +654,8 @@ void TST::constructCountVec(const vector<uint64_t> &translatedText, bool clearCo
 		}
 	}
 
-	if(clearCountLeaveVec){
+	if (clearCountLeaveVec)
+	{
 		this->countLeaveVec.resize(0);
 	}
 }

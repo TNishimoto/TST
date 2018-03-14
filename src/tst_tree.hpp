@@ -1,3 +1,21 @@
+/* 
+ * Copyright (C) 2018, Takaaki Nishimoto, all rights reserved.
+ *
+ *   Redistribution and use in source and binary forms, with or without
+ *   modification, are permitted provided that the following conditions
+ *   are met:
+ *
+ *   1. Redistributions of source code must retain the above Copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *
+ *   2. Redistributions in binary form must reproduce the above Copyright
+ *      notice, this list of conditions and the following disclaimer in the
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *   3. Neither the name of the authors nor the names of its contributors
+ *      may be used to endorse or promote products derived from this
+ *      software without specific prior written permission.
+ */
 #pragma once
 #include <iostream>
 #include <string>
@@ -12,6 +30,8 @@
 #include <algorithm>
 #include <stdint.h>
 #include <cassert>
+
+#include <io_functions.h>
 //#include "my_function.h"
 //#include "string_functions.h"
 //#include "zstring.h"
@@ -102,7 +122,10 @@ class TST
 	void constructQgramTree(vector<vector<uint64_t>>& _childrens, vector<ichar>& _labels, vector<uint64_t>& qgramNodePositionsOfTSTLeave);
 	void locate(istring& pattern, vector<uint64_t>& result);
 	uint64_t count(istring& pattern);
+	std::pair<bool, uint64_t> countUsingInternalCountVec(istring &pattern);
 	bool translatePattern(istring& pattern, vector<uint64_t>& result, bool isText);
+	bool restoreText(vector<uint64_t> &text, istring &result, uint64_t start_pos, uint64_t end_pos);
+
 	bool restoreText(vector<uint64_t>& text, istring& result);
 	bool hasInternalCountVec(){
 		return this->countNonLeaveVec.size() == this->internalNodes.size();
@@ -164,6 +187,42 @@ class TST
 
 
 		std::cout << "Total : " << totalBytes << "bytes" << std::endl;
+	}
+
+	static void build(ifstream &textStream, ofstream &tstStream, ofstream *tmpStream, uint32_t q){
+		string text;
+        std::cout << "loading text" << std::endl;         
+        bool b = my::IO::load(textStream, text);
+        tst::istring itext(text.begin(), text.end());
+        //std::string().swap(text);
+
+		tst::TST tst;
+        std::cout << "construct TST" << std::endl; 
+        tst.construct(itext, q);
+
+        vector<ochar> outputText;
+        std::cout << "translate text to qgram code" << std::endl; 
+        tst.translatePattern(itext, outputText, true);
+        std::cout << "constructing CountNonLeaveVec" << std::endl;
+        tst.constructCountVec(outputText, true);
+        std::cout << "constructed." << std::endl;
+
+        if(outputText.size() != itext.size() - tst.truncatedLength + 1){
+            throw "error";
+        }
+
+        std::cout << "save qgram code" << std::endl;
+		if(tmpStream != NULL){
+			//my::IO::writeVector<espchar>(*tmpStream,outputText);
+
+			tmpStream->write((const char *)(&outputText[0]), sizeof(tst::ochar) * outputText.size());
+		}
+        std::cout << "save TST" << std::endl;
+        tst.save(tstStream);
+
+		textStream.close();
+		tstStream.close();
+		if(tmpStream != NULL)tmpStream->close();
 	}
 	/*
 	void getPathStringFromLeafIndex(uint64_t index, istring& result){
