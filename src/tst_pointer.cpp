@@ -62,7 +62,7 @@ TSTNode &TST::TSTNodePointer::node()
 }
 uint64_t TST::TSTNodePointer::getNextLeafEdgeLength()
 {
-    if (this->pathLength == this->tree.truncatedLength)
+    if (this->pathLength == (int)this->tree.truncatedLength)
     {
         return 1;
     }
@@ -110,7 +110,7 @@ void TST::TSTNodePointer::getPathString(istring &result)
     {
         TSTNode &node = index.second ? tree.leave[index.first] : tree.internalNodes[index.first];
         tree.getPathString(NodeIndex(node.parent, false), result);
-        for (uint64_t x = 0; x < this->position; x++)
+        for (uint64_t x = 0; x < (uint64_t)this->position; x++)
         {
             result.push_back(tree.truncatedText[node.textPosition + x]);
         }
@@ -179,7 +179,7 @@ void TST::TSTNodePointer::useSuffixLink()
         this->position = this->isOnBottom() ? 0 : this->node().edgeLength;
         this->pathLength = nextPathLength;
 
-        for (uint64_t i = 0; i < pos; i++)
+        for (uint64_t i = 0; i < (uint64_t)pos; i++)
         {
             bool b = this->proceed(this->tree.truncatedText[this->tree[preIndex].textPosition + i]);
             if (!b)
@@ -208,21 +208,21 @@ void TST::TSTNodePointer::split()
     assert(this->node().parent != UINT64_MAX);
 
     NodeIndex newNodeIndex = this->tree.createNode(this->node().parent, this->node().textPosition, this->position, false);
-    TSTNode &newNode = this->tree.internalNodes[newNodeIndex.first];
+    [[maybe_unused]]TSTNode &newNode = this->tree.internalNodes[newNodeIndex.first];
     this->tree.childrens[newNodeIndex.first].push_back(this->index);
     //newNode.children.push_back(this->index);
 
     this->tree[oldNodeIndex].textPosition += this->position;
     this->tree[oldNodeIndex].edgeLength -= this->position;
 
-    TSTNode &oldParent = this->tree.internalNodes[this->tree[oldNodeIndex].parent];
+    [[maybe_unused]]TSTNode &oldParent = this->tree.internalNodes[this->tree[oldNodeIndex].parent];
     this->tree.childrens[this->tree[oldNodeIndex].parent][insertIndex.second] = newNodeIndex;
     //oldParent.children[insertIndex.second] = newNodeIndex;
     this->tree[oldNodeIndex].parent = newNodeIndex.first;
 
     this->index = newNodeIndex;
-    assert(this->node().parent < this->index.first);
-    assert(this->pathLength == this->getPathLength());
+    assert((int)this->node().parent < (int)this->index.first);
+    assert((int)this->pathLength == (int)this->getPathLength());
     if (!oldNodeIndex.second)
         assert(this->tree.suffixLinkCheck(oldNodeIndex.first));
     assert(this->tree.suffixLinkCheck(newNodeIndex.first));
@@ -260,7 +260,7 @@ bool TST::TSTNodePointer::onlineConstruct(ichar nowChar, ichar lastChar)
 
     if (this->isOnLeaf())
     {
-        assert(this->pathLength == this->tree.truncatedLength);
+        assert(this->pathLength == (int)this->tree.truncatedLength);
         if (this->tree.nextLeave[this->tree.nextLeave.size() - 1] == TSTNode::EMPTY)
         {
             this->tree.nextLeave[this->tree.nextLeave.size() - 1] = this->index.first;
@@ -271,7 +271,7 @@ bool TST::TSTNodePointer::onlineConstruct(ichar nowChar, ichar lastChar)
     bool b = this->proceed(nowChar);
     if (!b)
     {
-        NodeIndex nowChild = this->index;
+        [[maybe_unused]]NodeIndex nowChild = this->index;
         if (this->isOnEdge())
         {
             this->split();
@@ -279,7 +279,7 @@ bool TST::TSTNodePointer::onlineConstruct(ichar nowChar, ichar lastChar)
             {
                 this->tree.suffixLinks[this->tree.internalNodes.size() - 2] = this->index.first;
             }
-            NodeIndex newInternalNodeIndex = this->index;
+            [[maybe_unused]]NodeIndex newInternalNodeIndex = this->index;
 
             this->addLeaf(lastChar);
             this->useSuffixLink();

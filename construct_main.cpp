@@ -24,7 +24,7 @@
 #include <bitset>
 #include <cassert>
 #include "cmdline.h"
-#include "my_vector.h"
+#include "src/common1/my_vector.h"
 //#include "qgram_tree.h"
 
 using namespace std;

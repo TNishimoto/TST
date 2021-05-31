@@ -191,7 +191,7 @@ class TST
 	static void build(ifstream &textStream, ofstream &tstStream, ofstream *tmpStream, uint32_t q){
 		string text;
         std::cout << "loading text" << std::endl;         
-        bool b = my::IO::load(textStream, text);
+        [[maybe_unused]]bool b = my::IO::load(textStream, text);
         tst::istring itext(text.begin(), text.end());
         //std::string().swap(text);
 

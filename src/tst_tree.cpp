@@ -16,7 +16,7 @@
 *
 */
 #include "tst_tree.hpp"
-#include "my_vector.h"
+#include "common1/my_vector.h"
 #include <algorithm>
 namespace tst
 {
@@ -154,7 +154,7 @@ void TST::getPathString(NodeIndex index, istring &result)
 	result.clear();
 	vector<istring> r;
 	r.clear();
-	NodeIndex now = index;
+	[[maybe_unused]] NodeIndex now = index;
 	TSTNode *node = &(*this)[index];
 	if (index.first == TSTNode::BOTTOM)
 		return;
@@ -388,13 +388,13 @@ void TST::constructQgramTree(vector<vector<uint64_t>> &_childrens, vector<ichar>
 	auto fstIndex = 0;
 	this->getPathString(NodeIndex(0, true), fstText);
 	assert(fstText.size() == this->truncatedLength);
-	for (int i = 0; i <= this->truncatedLength; i++)
+	for (int i = 0; i <= (int)this->truncatedLength; i++)
 	{
 
 		auto c = i > 0 ? fstText[i - 1] : 0;
 		_labels.push_back(c);
 		_childrens.push_back(vector<uint64_t>());
-		if (i != this->truncatedLength)
+		if (i != (int)this->truncatedLength)
 		{
 			_childrens[i].push_back(i + 1);
 		}

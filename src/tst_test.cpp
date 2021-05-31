@@ -35,7 +35,7 @@
 #include "tst_tree.hpp"
 
 namespace tst{
-		void TST::createTreeLog(vector<string>& log, int i) {
+		void TST::createTreeLog([[maybe_unused]]vector<string>& log, [[maybe_unused]]int i) {
 			/*
 			log[i].clear();
 			vector<string> r;
@@ -54,7 +54,7 @@ namespace tst{
 			}
 			*/
 		}
-	void TST::createTreeLog(vector<string>& log) {
+	void TST::createTreeLog([[maybe_unused]]vector<string>& log) {
 			/*
 			log.resize(this->leave.size());
 			for (int i = 0; i < this->leave.size(); i++) {
@@ -87,7 +87,7 @@ namespace tst{
 			*/
 
 		}
-		void TST::getAllQgrams(vector<string> result) {
+		void TST::getAllQgrams([[maybe_unused]]vector<string> result) {
 			/*
 			result.resize(this->leave.size());
 			auto rambda = [](const string& x, const string& y) -> int {
@@ -142,7 +142,7 @@ namespace tst{
 		std::sort(result.begin(), result.end(), rambda);
 
 	}
-	bool test(string& text, int q) {
+	bool test([[maybe_unused]]string& text, [[maybe_unused]]int q) {
 		/*
 		vector<string> naiveResult;
 		vector<string> tstResult;
