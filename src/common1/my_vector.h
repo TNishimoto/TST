@@ -20,13 +20,13 @@ namespace my {
             text.push_back(pattern[i]);
         }        
 	}
-    static void createFromString(std::string& text, vector<uint8_t> &output)
+    [[maybe_unused]] static void createFromString(std::string& text, vector<uint8_t> &output)
 	{
         for(uint64_t i=0;i<text.size();i++){
             output.push_back(static_cast<uint8_t>(text[i]));
         }        
 	}
-    static string to_string(vector<uint8_t> &text)
+    [[maybe_unused]] static string to_string(vector<uint8_t> &text)
 	{
         string str;
         for(uint64_t i=0;i<text.size();i++){
